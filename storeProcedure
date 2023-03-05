@@ -1,0 +1,178 @@
+create database test;
+use test;
+--建立基本表
+create table student
+(
+ID char(8) primary key,
+name char(8),
+gender char(2),
+age int default 20,
+major char(20)
+);
+
+create table course
+(
+courseID char(8) primary key,
+courseName char(8) unique,
+AdCourse char(8) 
+);
+
+create table selectCourse
+(
+ID char(8) 
+constraint s_s_fk foreign key (ID) references student,
+courseID char(8)
+constraint s_c_fk foreign key (courseID) references course,
+grade int check(grade>=0 and grade<=100) --自定义
+primary key (ID, courseID)
+);
+
+alter table student add constraint ck_gender check(gender='F' or gender='M');
+
+insert into student values 
+('S00001','Wang','F',21,'CS');
+
+insert into student (name,ID)values 
+('Luo','S00002');
+
+insert into student (ID,major,name,age)values
+('S00003','MATH','Zhang',23);
+
+select * from student;
+
+--所有学生增加两岁
+update student 
+set age=age+2;
+
+--将学号为00001的学生所在系改为'CE'
+update student 
+set major='CE' 
+where ID='S00001'
+
+--将姓名为 zhang 的年龄减小三岁，所在系改为 'Auto'
+update student
+set age = age - 3,
+major = 'Auto'
+where name = 'Zhang';
+
+--T-SQL
+
+declare @d date --定义 @局部变量 @@全局变量
+select @d=getdate() --获取日期
+print @d; --输出
+
+declare @s char(10)
+set @s = 'hello'
+print @s;
+-- 第一种方法用if else
+declare @m int
+set @m = 8
+if @m > 8
+	goto t1
+else
+	goto t2
+t1:
+	select cast(@m as varchar)
+t2:
+	declare @n char(10)
+	set @n = 'hello'
+	print @n;
+-- 第二种方法用 if else
+declare @c int
+set @c = 8
+if @c > 8
+	select cast(@c as varchar)
+else
+	begin --可以不写
+		declare @a char(10)
+		set @a = 'hello'
+		print @a
+	end --可以不写
+
+-- 创建视图
+create view grade
+as
+select ID, courseID, grade=( 
+case 
+when grade <= 60 then 'fail'
+when grade > 60 and grade <= 70 then 'D'
+when grade > 70 and grade <= 80 then 'C'
+when grade > 80 and grade <= 90 then 'B'
+when grade > 90 and grade <= 100 then 'A'
+end ) 
+from selectCourse;
+--查询视图
+select * from grade;
+
+select * from selectCourse;
+select * from student;
+insert into student values
+('S00011','Wu','F',20,'Fin'),
+('S00009','Liu','M',20,'CS'),
+('S00016','Li','F',20,'Fin');
+
+insert into selectCourse values 
+('S00001','C008',87),
+('S00001','C009',93),
+('S00011','C001',92),
+('S00003','C004',75),
+('S00003','C005',83),
+('S00009','C001',96),
+('S00016','C001',64),
+('S00016','C003',91),
+('S00016','C004',null),
+('S00016','C006',80),
+('S00016','C007',83)
+
+insert into course values
+('C001','CS',null),
+('C002','ES',null),
+('C003','Ed',null),
+('C004','EC',null),
+('C005','CA',null),
+('C006','EA',null),
+('C007','FN',null),
+('C008','AU',null),
+('C009','KK',null)
+
+--创建并调用不带参数的存储过程
+--创建存储过程
+create procedure SearchStudent
+as
+begin
+	declare @y int
+	select @y = COUNT(*) from student
+	print @y
+	select * from student
+end;
+--调用存储过程
+exec SearchStudent
+--删除存储过程
+drop procedure SearchStudent;
+
+--另一种返回
+declare @dd int --定义变量
+exec @dd=SearchStudent --给变量赋值
+print @dd; --打印结果
+
+--根据过程返回的状态值控制程序
+declare @state int --定义变量
+exec @state=SearchStudent --给变量赋值
+if @state=0
+	print 'Successful'
+else
+	print 'Fail'; --Result 打印结果，Message 打印 Successful 或者 Fail
+
+--建立并调用一个带参数的存储过程
+--创建
+create procedure conditionSearch @cs char(20)
+as
+select * from student where major = @cs;
+--调用
+exec conditionSearch @cs = 'Auto'
+--创建两个参数的存储过程
+create procedure conditionSearch2 @cs char(20), @acs char(2)
+as
+select * from student where major = @cs and gender=@acs;
+--调用
+exec conditionSearch2 @cs='Fin', @acs = 'F';
