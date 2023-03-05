@@ -1,0 +1,36 @@
+create database library;
+
+create table books(
+bookID char(8) primary key,
+bookName char(20),
+author char(8),
+publicer char(20),
+type char(8),
+price int
+);
+
+create table borrower(
+borrowerID char(8) primary key,
+borrowerName char(8),
+major char(20),
+borrowerType char(20),
+tel char(25),
+check(borrowerType = 'teacher' or borrowerType = 'student')
+);
+
+create table borrow(
+borrowerID char(8),
+bookID char(8),
+borrowDate date default '2023-03-05',
+primary key (borrowerID,bookID),
+foreign key (borrowerID) references borrower,
+foreign key (bookID) references books
+)
+
+begin try
+declare @num int
+set @num=1/0
+end try
+begin catch
+print 'wrong'
+end catch
