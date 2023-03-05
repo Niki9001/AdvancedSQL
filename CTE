@@ -1,0 +1,9 @@
+--CTE
+with a as 
+(select * from student), 
+b as ( select * from selectCourse),
+c as (select * from course)
+select a.*,b.courseID, c.courseName
+from a inner join b
+on a.ID=b.ID inner join c
+on b.courseID=c.courseID
