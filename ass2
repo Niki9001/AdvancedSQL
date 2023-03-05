@@ -1,0 +1,136 @@
+use master;
+drop database PatientvitalsDB;
+/*Create database*/
+create database PatientvitalsDB;
+use PatientvitalsDB;
+
+/*Create table Patient*/
+create table Patient (
+patientID int identity(1,1) not null,
+FirstName varchar(255),
+LastName varchar(255),
+HCN varchar(255)
+);
+
+/*Insert data*/
+insert into Patient (FirstName, LastName, HCN) values
+('James','Brown','757234587'),
+('Bob','Marley','75777761');
+
+/*Create table Vitals*/
+create table Vitals (
+VitalsID int identity(1,1) not null,
+PatientId int,
+VitalsTypeID int,
+VitalsDT datetime,
+VitalsValue float
+);
+
+/*Create table VitalType*/
+create table VitalType (
+VitalsTypeID int not null,
+VitalsTypeName varchar(255)
+);
+
+/*Insert data to VitalsType*/
+insert into VitalType (VitalsTypeID,VitalsTypeName) values
+(1, 'HR'),
+(2, 'Temp'),
+(3, 'MAP'),
+(4, 'SBP'),
+(5, 'DBP');
+
+/*Add primary key*/
+alter table Patient
+add constraint pk_patient primary key (patientID);
+
+alter table Vitals
+add constraint pk_vitals primary key (VitalsID);
+
+alter table VitalType
+add constraint pk_vitaltype primary key (VitalsTypeID);
+
+/*Add foreign key*/
+alter table Vitals
+add constraint fk1_pid foreign key (PatientID) references Patient (patientID);
+
+alter table Vitals
+add constraint fk2_vt foreign key (VitalsTypeID) references VitalType (VitalsTypeID);
+
+/*Verify*/
+select * from Patient;
+select * from Vitals;
+select * from VitalType;
+/*
+-- Insert information to Vitals table
+insert into Vitals (PatientId,VitalsTypeID,VitalsDT,VitalsValue) values
+(1,1,'01-Jan-2022',85),
+(1,2,'01-Jan-2022',36.1),
+(1,4,'01-Jan-2022',134),
+(1,5,'01-Jan-2022',91),
+(2,1,'02-Jan-2022',67),
+(2,2,'02-Jan-2022',37.5),
+(2,4,'02-Jan-2022',145),
+(2,5,'02-Jan-2022',87),
+(1,1,'03-Jan-2022',81),
+(1,2,'03-Jan-2022',38.1),
+(1,4,'03-Jan-2022',154),
+(1,5,'03-Jan-2022',97),
+(2,1,'04-Jan-2022',72),
+(2,2,'04-Jan-2022',37.5),
+(2,4,'04-Jan-2022',157),
+(2,5,'04-Jan-2022',88),
+*/
+
+-- Create store procedure name 1 and date 1
+create procedure sp_n1_d1 @PatinetID int=1, @VitalTypeID int, @VitalsDT datetime='01-Jan-2022',  @VitalsValue float
+as
+insert into Vitals (PatientId,VitalsTypeID,VitalsDT,VitalsValue) values
+(@PatinetID,@VitalTypeID,@VitalsDT,@VitalsValue)
+-- Insert first row
+exec sp_n1_d1 @VitalTypeID=1,@VitalsValue=85;
+exec sp_n1_d1 @VitalTypeID=2,@VitalsValue=36.1;
+exec sp_n1_d1 @VitalTypeID=4,@VitalsValue=134;
+exec sp_n1_d1 @VitalTypeID=5,@VitalsValue=91;
+
+-- Create store procedure name 2 and date 1
+create procedure sp_n2_d1 @PatinetID int=2, @VitalTypeID int, @VitalsDT datetime='02-Jan-2022',  @VitalsValue float
+as
+insert into Vitals (PatientId,VitalsTypeID,VitalsDT,VitalsValue) values
+(@PatinetID,@VitalTypeID,@VitalsDT,@VitalsValue)
+-- Insert second row
+exec sp_n2_d1 @VitalTypeID=1,@VitalsValue=67;
+exec sp_n2_d1 @VitalTypeID=2,@VitalsValue=37.5;
+exec sp_n2_d1 @VitalTypeID=4,@VitalsValue=145;
+exec sp_n2_d1 @VitalTypeID=5,@VitalsValue=87;
+
+-- Create store procedure name 1 and date 2
+create procedure sp_n1_d2 @PatinetID int=1, @VitalTypeID int, @VitalsDT datetime='03-Jan-2022',  @VitalsValue float
+as
+insert into Vitals (PatientId,VitalsTypeID,VitalsDT,VitalsValue) values
+(@PatinetID,@VitalTypeID,@VitalsDT,@VitalsValue)
+-- Insert third row
+exec sp_n1_d2 @VitalTypeID=1,@VitalsValue=81;
+exec sp_n1_d2 @VitalTypeID=2,@VitalsValue=38.1;
+exec sp_n1_d2 @VitalTypeID=4,@VitalsValue=154;
+exec sp_n1_d2 @VitalTypeID=5,@VitalsValue=97;
+
+-- Create store procedure name 2 and date 2
+create procedure sp_n2_d2 @PatinetID int=2, @VitalTypeID int, @VitalsDT datetime='04-Jan-2022',  @VitalsValue float
+as
+insert into Vitals (PatientId,VitalsTypeID,VitalsDT,VitalsValue) values
+(@PatinetID,@VitalTypeID,@VitalsDT,@VitalsValue)
+-- Insert fourth row
+exec sp_n2_d2 @VitalTypeID=1,@VitalsValue=75;
+exec sp_n2_d2 @VitalTypeID=2,@VitalsValue=37.5;
+exec sp_n2_d2 @VitalTypeID=4,@VitalsValue=157;
+exec sp_n2_d2 @VitalTypeID=5,@VitalsValue=88;
+
+--drop procedure sp_n1_d1;
+--drop procedure sp_n1_d2;
+--drop procedure sp_n2_d1;
+--drop procedure sp_n2_d2;
+
+--Add map value
+create procedure sp_map 
+insert into Vitals 
