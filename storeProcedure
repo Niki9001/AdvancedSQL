@@ -137,7 +137,7 @@ insert into course values
 
 --创建并调用不带参数的存储过程
 --创建存储过程
-create procedure SearchStudent
+create/alter procedure SearchStudent
 as
 begin
 	declare @y int
