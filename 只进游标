@@ -20,13 +20,14 @@ set @存放单行数据 = user cursor
 fetch next from @存放单行数据 into @参数
 */
 open user_cursor
---参数数据格式必须与原本表中的数据格式一致
-declare @varUser cursor, @id char,@age1 int
+--参数数据格式必须与原本表中的数据格式一致，字符数也要一致
+declare @varUser cursor, @id char(8),@age1 int
 set @varUser = user_cursor
 fetch next from @varUser into @id,@age1
 while @@FETCH_STATUS=0 -- 判断是否执行成功
 begin
 	print cast(@id as varchar)+','+convert(varchar,@age1)
+
 	fetch next from @varUser into @id,@age1
 end
 --关闭游标
