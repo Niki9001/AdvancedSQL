@@ -1,0 +1,51 @@
+--标准视图
+/*
+create view 视图名称
+as
+T-SQL查询语句
+*/
+select * from books;
+select * from borrow;
+select * from borrower;
+select * from student;
+
+create view test1
+as
+select b1.borrowerID, b1.bookID, b2.borrowerName from borrow as b1
+inner join borrower as b2 
+on b1.borrowerID=b2.borrowerID
+
+--修改视图
+alter view test1
+as
+select b1.borrowerID, b1.bookID, b2.borrowerName ,b.author from borrow as b1
+inner join borrower as b2 
+on b1.borrowerID=b2.borrowerID inner join books as b on b.bookID=b1.bookID
+
+--使用试图，就像使用表一样
+select * from test1
+where borrowerID>1
+order by bookID;
+
+
+--索引视图
+create view test_index with schemabinding
+as
+select s.ID,s.age from dbo.student as s;
+
+--使用索引试图
+select * from test_index;
+
+--索引视图创建惟一聚集索引
+create unique clustered index uq_test_index
+on test_index(ID)
+
+--分区视图
+create view view_dis
+as 
+select * from table1
+union all 
+select * from table2
+
+--使用视图
+select * from view_dis
