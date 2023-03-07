@@ -1,0 +1,35 @@
+-- 创建只进游标
+--1. 定义游标
+/*
+declare 游标名 cursor local / global
+for 
+查询T-SQL
+select 列名 from 表
+where 条件
+*/
+declare user_cursor cursor local
+for 
+select id,age from student
+--2. 打开游标
+/*
+open 游标名
+--
+declare @存放单行数据 cursor, @参数 数据类型
+set @存放单行数据 = user cursor
+提取数据 next / prior / first / last / absolute n / relative n
+fetch next from @存放单行数据 into @参数
+*/
+open user_cursor
+--参数数据格式必须与原本表中的数据格式一致
+declare @varUser cursor, @id char,@age1 int
+set @varUser = user_cursor
+fetch next from @varUser into @id,@age1
+while @@FETCH_STATUS=0 -- 判断是否执行成功
+begin
+	print cast(@id as varchar)+','+convert(varchar,@age1)
+	fetch next from @varUser into @id,@age1
+end
+--关闭游标
+close user_cursor
+--释放游标
+deallocate user_cursor
